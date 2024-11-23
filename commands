@@ -1,0 +1,5 @@
+sudo tail -f /opt/splunkforwarder/var/log/splunk/splunkd.log
+
+sudo /opt/splunkforwarder/bin/splunk list monitor
+
+sudo /opt/splunkforwarder/bin/splunk list forward-server

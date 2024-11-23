@@ -1,0 +1,38 @@
+version: "3.8"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring-boot-app
+    volumes:
+      - ./logs:/app/logs       # Monta o diretório de logs no host
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "9000:9000"
+
+  splunk:
+    image: splunk/splunk:latest
+    container_name: splunk-server
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_PASSWORD=changeme123
+    ports:
+      - "8000:8000"  # Interface Web
+      - "8088:8088"  # HEC
+      - "9997:9997"  # Universal Forwarder
+
+  forwarder:
+    image: splunk/universalforwarder:latest
+    container_name: splunk-forwarder
+    depends_on:
+      - splunk
+    volumes:
+      - ./splunk-forwarder:/opt/splunkforwarder/etc/system/local
+      - ./logs:/monitored_logs
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_PASSWORD=changeme123
+      - SPLUNK_FORWARD_SERVER=splunk:9997
+    command: [ "start-service" ]
