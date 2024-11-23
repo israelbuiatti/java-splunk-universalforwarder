@@ -14,7 +14,7 @@ services:
 
   splunk:
     image: splunk/splunk:latest
-    container_name: splunk-server
+    container_name: splunk
     environment:
       - SPLUNK_START_ARGS=--accept-license
       - SPLUNK_PASSWORD=changeme123
